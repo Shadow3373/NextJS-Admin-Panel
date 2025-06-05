@@ -11,24 +11,42 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { authApi } from "@/lib/api";
 import { setTokenClient } from "@/lib/auth";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
 });
 
-const registerSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const registerSchema = z
+  .object({
+    userName: z
+      .string()
+      .min(2, { message: "Name must be at least 2 characters" }),
+    email: z.string().email({ message: "Please enter a valid email address" }),
+    mobile: z
+      .string()
+      .min(10, { message: "mobile must be at least 10 characters" }),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -74,7 +92,12 @@ export function AuthForm({ type }: AuthFormProps) {
   const onRegisterSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
     try {
-      const response = await authApi.register(data.name, data.email, data.password);
+      const response = await authApi.register(
+        data.userName,
+        data.email,
+        data.mobile,
+        data.password
+      );
       setTokenClient(response.token);
       toast.success("Registered successfully");
       router.push("/dashboard");
@@ -99,7 +122,10 @@ export function AuthForm({ type }: AuthFormProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         {type === "login" ? (
-          <form onSubmit={handleLoginSubmit(onLoginSubmit)} className="space-y-4">
+          <form
+            onSubmit={handleLoginSubmit(onLoginSubmit)}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -109,7 +135,9 @@ export function AuthForm({ type }: AuthFormProps) {
                 className={loginErrors.email ? "border-destructive" : ""}
               />
               {loginErrors.email && (
-                <p className="text-sm text-destructive">{loginErrors.email.message}</p>
+                <p className="text-sm text-destructive">
+                  {loginErrors.email.message}
+                </p>
               )}
             </div>
             <div className="space-y-2">
@@ -122,11 +150,14 @@ export function AuthForm({ type }: AuthFormProps) {
               <Input
                 id="password"
                 type="password"
+                autoComplete="current-password"
                 {...registerLogin("password")}
                 className={loginErrors.password ? "border-destructive" : ""}
               />
               {loginErrors.password && (
-                <p className="text-sm text-destructive">{loginErrors.password.message}</p>
+                <p className="text-sm text-destructive">
+                  {loginErrors.password.message}
+                </p>
               )}
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
@@ -134,17 +165,22 @@ export function AuthForm({ type }: AuthFormProps) {
             </Button>
           </form>
         ) : (
-          <form onSubmit={handleRegisterSubmit(onRegisterSubmit)} className="space-y-4">
+          <form
+            onSubmit={handleRegisterSubmit(onRegisterSubmit)}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
                 placeholder="Your name"
-                {...registerSignup("name")}
-                className={registerErrors.name ? "border-destructive" : ""}
+                {...registerSignup("userName")}
+                className={registerErrors.userName ? "border-destructive" : ""}
               />
-              {registerErrors.name && (
-                <p className="text-sm text-destructive">{registerErrors.name.message}</p>
+              {registerErrors.userName && (
+                <p className="text-sm text-destructive">
+                  {registerErrors.userName.message}
+                </p>
               )}
             </div>
             <div className="space-y-2">
@@ -156,7 +192,25 @@ export function AuthForm({ type }: AuthFormProps) {
                 className={registerErrors.email ? "border-destructive" : ""}
               />
               {registerErrors.email && (
-                <p className="text-sm text-destructive">{registerErrors.email.message}</p>
+                <p className="text-sm text-destructive">
+                  {registerErrors.email.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="mobile">Mobile</Label>
+              <Input
+                id="mobile"
+                placeholder="Enter your mobile number"
+                minLength={10}
+                maxLength={10}
+                {...registerSignup("mobile")}
+                className={registerErrors.mobile ? "border-destructive" : ""}
+              />
+              {registerErrors.mobile && (
+                <p className="text-sm text-destructive">
+                  {registerErrors.mobile?.message}
+                </p>
               )}
             </div>
             <div className="space-y-2">
@@ -168,7 +222,9 @@ export function AuthForm({ type }: AuthFormProps) {
                 className={registerErrors.password ? "border-destructive" : ""}
               />
               {registerErrors.password && (
-                <p className="text-sm text-destructive">{registerErrors.password.message}</p>
+                <p className="text-sm text-destructive">
+                  {registerErrors.password.message}
+                </p>
               )}
             </div>
             <div className="space-y-2">
@@ -177,10 +233,14 @@ export function AuthForm({ type }: AuthFormProps) {
                 id="confirmPassword"
                 type="password"
                 {...registerSignup("confirmPassword")}
-                className={registerErrors.confirmPassword ? "border-destructive" : ""}
+                className={
+                  registerErrors.confirmPassword ? "border-destructive" : ""
+                }
               />
               {registerErrors.confirmPassword && (
-                <p className="text-sm text-destructive">{registerErrors.confirmPassword.message}</p>
+                <p className="text-sm text-destructive">
+                  {registerErrors.confirmPassword.message}
+                </p>
               )}
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
