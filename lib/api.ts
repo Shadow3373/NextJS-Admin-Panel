@@ -1,6 +1,6 @@
 import { getTokenClient } from './auth';
 
-const API_BASE_URL = 'http://192.168.1.100:7000/user';
+const API_BASE_URL = 'https://nextjs-admin-panel-backend.onrender.com/user';
 
 type ApiOptions = {
   method?: string;
