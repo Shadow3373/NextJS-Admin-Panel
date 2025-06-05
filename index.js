@@ -42,6 +42,6 @@ app.use("/", (req, res) => res.sendFile(path.join(__dirname, "404.html")));
 // app.use(errorHandler);
 
 /* Server Listening to port */
-// const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 // const URL = process.env.BASEURL || "https://localhost:";
-// app.listen(PORT, console.log(`server running on ${URL}${PORT}`));
+app.listen(PORT, console.log(`server running on ${URL}${PORT}`));
