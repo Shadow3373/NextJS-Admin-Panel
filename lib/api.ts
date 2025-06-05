@@ -55,13 +55,17 @@ export const authApi = {
   },
 };
 
-export const userApi = {
-  getAll: async () => {
-    return apiFetch("/all");
-  },
-  getProfile: async () => {
-    return apiFetch("/profile");
-  },
+export const userApi = async (endpoint: string, options = {}) => {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    ...options,
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
 };
 
 export const dashboardApi = {
