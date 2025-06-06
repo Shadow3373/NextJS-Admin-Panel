@@ -36,8 +36,9 @@ const userSchema = new Schema(
       option: ["pending", "active", "inactive"],
       default: "pending",
     },
-    lastActive: {
-      TimeRanges: true,
+    lastActiveAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
