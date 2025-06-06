@@ -21,8 +21,7 @@ app.use(express.static(path.join(__dirname, "./public")));
 
 connection();
 
-app.use("/user", userRoute);
-
+app.use("/api/v2/user", userRoute);
 app.use("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
 const PORT = process.env.PORT || 5000;

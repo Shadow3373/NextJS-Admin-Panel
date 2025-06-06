@@ -29,10 +29,12 @@ const userLogin = async (req, res) => {
   try {
     console.log(req.body);
     let { email, password } = req.body;
-    const checkEmail = await user.findOne({ email }).lean().exec();
+    const checkEmail = await user.findOne({ email }).select("+password");
+    console.log(checkEmail);
     if (!checkEmail)
       return res.status(401).json({ message: "Invaild credential" });
     const checkPassword = await bcrypt.compare(password, checkEmail.password);
+    console.log("password", checkPassword);
     if (!checkPassword)
       return res.status(401).json({ message: "Invaild credential" });
     const token = generateToken(checkEmail);
@@ -53,13 +55,10 @@ const getUsers = async (req, res) => {
 };
 
 const userLogout = (req, res) => {
-  // if (!token && !token?.StartWidth("Bearer"))
-  //   return res.status(401).json({ message: "Authorization Failed" });
-  // const withoutBearer = token.split(" ")[1];
   try {
     const token = req.body;
-    // const checktoken = jwt.verify(token, process.env.SECRET_KEY);
-    if (token)
+    const checktoken = jwt.verify(token, process.env.SECRET_KEY);
+    if (checktoken)
       return res.status(200).json({ message: "User Logout Successfully" });
   } catch (error) {
     res

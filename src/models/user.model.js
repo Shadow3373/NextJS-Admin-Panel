@@ -18,13 +18,13 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 6 characters"],
-      select: false, // hide password by default
+      minlength: [10, "Password must be at least 6 characters"],
+      select: false,
     },
-    phone: {
+    mobile: {
       type: String,
       trim: true,
-      match: [/^[0-9]{10}$/, "Please enter a valid 10-digit phone number"],
+      match: [/^[0-9]/, "Please enter a valid 10-digit phone number"],
     },
     role: {
       type: String,
@@ -39,7 +39,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    // Active/inactive status fields
     isActive: {
       type: Boolean,
       default: true,
