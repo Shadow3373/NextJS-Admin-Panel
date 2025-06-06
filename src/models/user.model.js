@@ -27,6 +27,18 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
+    role: {
+      type: String,
+      option: ["Admin", "Super Admin", "User", "Editor"],
+    },
+    status: {
+      type: String,
+      option: ["pending", "active", "inactive"],
+      default: "pending",
+    },
+    lastActive: {
+      TimeRanges: true,
+    },
   },
   {
     timestamps: true,
