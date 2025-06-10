@@ -24,7 +24,17 @@ const verifyToken = async (req, res, next) => {
   res.json("user verfied successfully");
 };
 
+const verfiyOTP = (req, res) => {
+  const { email, otp } = req.body;
+  if (otpStore[email] === otp) {
+    delete otpStore[email]; // OTP used
+    return res.status(200).json({ message: "OTP verified successfully" });
+  } else {
+    return res.status(400).json({ error: "Invalid or expired OTP" });
+  }
+};
 module.exports = {
   generateToken,
   verifyToken,
+  verfiyOTP,
 };

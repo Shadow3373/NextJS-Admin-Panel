@@ -10,11 +10,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Generate OTP
-function generateOTP() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
 // Send OTP Route
 app.post("/send-otp", async (req, res) => {
   const { email } = req.body;
@@ -36,14 +31,4 @@ app.post("/send-otp", async (req, res) => {
   }
 });
 
-// Verify OTP Route
-app.post("/verify-otp", (req, res) => {
-  const { email, otp } = req.body;
-
-  if (otpStore[email] === otp) {
-    delete otpStore[email]; // OTP used
-    return res.status(200).json({ message: "OTP verified successfully" });
-  } else {
-    return res.status(400).json({ error: "Invalid or expired OTP" });
-  }
-});
+module.exports = transporter;

@@ -1,3 +1,4 @@
+const { error } = require("winston");
 const { generateToken } = require("../middlewares/authToken");
 const user = require("../models/user.model");
 const bcrypt = require("bcryptjs");
@@ -45,6 +46,26 @@ const userLogin = async (req, res) => {
   }
 };
 
+const generateOTP = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+const loginWithOTP = async (req, res) => {
+  const { email } = req.body;
+  if (email) {
+    const userData = await user.findOne({ email });
+    if (!userData) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const otp = generateOTP();
+    return res
+      .status(200)
+      .json({ email, otp, message: "OTP sent successfully" });
+  } else {
+    return res.status(400).json({ message: "somthing went wrong" });
+  }
+};
+
 const getUsers = async (req, res) => {
   try {
     const data = await user.find();
@@ -72,4 +93,5 @@ module.exports = {
   userLogin,
   getUsers,
   userLogout,
+  loginWithOTP,
 };
